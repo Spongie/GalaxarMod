@@ -1,24 +1,28 @@
 package Galaxar.Mod.TileEntitys;
 
-import java.util.Random;
-
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 
-public class TileEntityGalaxarChest extends TileEntity implements IInventory {
+public class TileEntityWorldMiner extends TileEntity implements IInventory {
 
-	private ItemStack[] inventory;
-	private int power;
+	ItemStack[] inventory;
+	private int consumedFuel;
+	private int fuelToGenerateItem;
 	
-	public TileEntityGalaxarChest(){
-		inventory = new ItemStack[117];
+	private int minGeneratedItems;
+	private int maxGeneratedItems;
+	
+	public TileEntityWorldMiner(int min, int max, int fuelReq)
+	{
+		inventory = new ItemStack[1];
+		minGeneratedItems = min;
+		maxGeneratedItems = max;
+		consumedFuel = 0;
+		fuelToGenerateItem = fuelReq;
 	}
 	
 	@Override
@@ -134,25 +138,19 @@ public class TileEntityGalaxarChest extends TileEntity implements IInventory {
 		}
 	}
 	
-	/*
+	
 	public int tickRate()
 	{
-		return 60;
+		//value % 20 = seconds between updates
+		return 20;
 	}
-	 
+	
 	public void updateEntity()
 	{
-		if(inventory != null)
+		if(inventory[0].stackSize > 1)
 		{
-			if(inventory[0] != null && inventory[0].stackSize > 0)
-			{
-				ItemStack itemStack = getStackInSlot(0);
-				itemStack.stackSize--;
-				if(itemStack.stackSize <= 1)
-					itemStack = null;
-				
-				setInventorySlotContents(0, itemStack);
-			}
+			consumedFuel += 1;
+			inventory[0].stackSize--;
 		}
-	}*/
+	}
 }
