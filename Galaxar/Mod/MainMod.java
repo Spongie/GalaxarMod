@@ -13,6 +13,7 @@ import Galaxar.Mod.Blocks.*;
 import Galaxar.Mod.GUI.GuiHandler;
 import Galaxar.Mod.Items.*;
 import Galaxar.Mod.TileEntitys.TileEntityGalaxarChest;
+import Galaxar.Mod.TileEntitys.TileEntityWorldMiner;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -46,6 +47,8 @@ public class MainMod {
 	public final static Block blackGlass = new BlackGlass(3445);
 	public final static Block blueGlass = new BlueGlass(3446);
 	public final static Block redGlass = new RedGlass(3447);
+	
+	public final static Block worldMiner = new WorldMiner(3448, Material.iron);
 	
 	public final static Item darkStick = new DarkStick(3431);
 	public final static Item dyeBucket = new DyeBucket(3439);
@@ -89,6 +92,7 @@ public class MainMod {
 	private void RegisterEntities()
 	{
 		GameRegistry.registerTileEntity(TileEntityGalaxarChest.class, "galaxarChest");
+		GameRegistry.registerTileEntity(TileEntityWorldMiner.class, "worldMiner");
 	}
 	
 	private void RegisterBlocks()
@@ -115,6 +119,9 @@ public class MainMod {
 		
 		GameRegistry.registerBlock(redGlass, "redGlass");
 		LanguageRegistry.addName(redGlass, "Red Glass");
+		
+		GameRegistry.registerBlock(worldMiner, "worldMiner");
+		LanguageRegistry.addName(worldMiner, "World Miner");
 	}
 	
 	private void RegisterItems()

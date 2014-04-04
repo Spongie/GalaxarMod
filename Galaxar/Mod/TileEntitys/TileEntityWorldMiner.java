@@ -1,11 +1,18 @@
 package Galaxar.Mod.TileEntitys;
 
+import java.util.Random;
+
+import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Vec3;
+import net.minecraft.util.Vec3Pool;
+import net.minecraft.world.World;
 
 public class TileEntityWorldMiner extends TileEntity implements IInventory {
 
@@ -16,6 +23,12 @@ public class TileEntityWorldMiner extends TileEntity implements IInventory {
 	private int minGeneratedItems;
 	private int maxGeneratedItems;
 	
+	private int outX;
+	private int outY;
+	private int outZ;
+	
+	private int[] spawnableIDs;
+	
 	public TileEntityWorldMiner(int min, int max, int fuelReq)
 	{
 		inventory = new ItemStack[1];
@@ -23,6 +36,14 @@ public class TileEntityWorldMiner extends TileEntity implements IInventory {
 		maxGeneratedItems = max;
 		consumedFuel = 0;
 		fuelToGenerateItem = fuelReq;
+		initSpawns();
+	}
+	
+	private void initSpawns()
+	{
+		spawnableIDs = new int[2];
+		spawnableIDs[0] = Block.coalBlock.blockID;
+		spawnableIDs[1] = Block.oreIron.blockID;
 	}
 	
 	@Override
@@ -72,7 +93,7 @@ public class TileEntityWorldMiner extends TileEntity implements IInventory {
 
 	@Override
 	public String getInvName() {
-		return "Galaxar Chest";
+		return "WorldMiner";
 	}
 
 	@Override
@@ -116,22 +137,22 @@ public class TileEntityWorldMiner extends TileEntity implements IInventory {
 			{
 				NBTTagCompound item = new NBTTagCompound();
 				
-				item.setByte("SlotGalaxarChest", (byte)i);
+				item.setByte("SlotWorldMiner", (byte)i);
 				stack.writeToNBT(item);
 				list.appendTag(item);
 			}
 		}
 		
-		compound.setTag("ItemsGalaxarChest", list);
+		compound.setTag("ItemsWorldMiner", list);
 	}
 	
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		super.readFromNBT(compound);
-		NBTTagList list = compound.getTagList("ItemsGalaxarChest");
+		NBTTagList list = compound.getTagList("ItemsWorldMiner");
 		for(int i = 0; i < list.tagCount(); i++) {
 			NBTTagCompound item = (NBTTagCompound) list.tagAt(i);
-			int slot = item.getByte("SlotGalaxarChest");
+			int slot = item.getByte("SlotWorldMiner");
 			if(slot >= 0 && slot < getSizeInventory()) {
 				  setInventorySlotContents(slot, ItemStack.loadItemStackFromNBT(item));
 				}
@@ -142,15 +163,118 @@ public class TileEntityWorldMiner extends TileEntity implements IInventory {
 	public int tickRate()
 	{
 		//value % 20 = seconds between updates
-		return 20;
+		return 100;
 	}
 	
 	public void updateEntity()
 	{
-		if(inventory[0].stackSize > 1)
+		
+		if(hasAdjacentContainer(getWorldObj()))
 		{
-			consumedFuel += 1;
-			inventory[0].stackSize--;
+			
+			if(inventory[0] != null && inventory[0].stackSize > 0)
+			{
+				
+				consumedFuel += 1;
+				ItemStack stack = getStackInSlot(0);
+				stack.stackSize--;
+				if(stack.stackSize <= 1)
+					stack = null;
+				setInventorySlotContents(0, stack);
+			}
+			
+			if(consumedFuel >= fuelToGenerateItem)
+			{
+				consumedFuel = 0;
+				int idToSpawn = spawnableIDs[new Random().nextInt(spawnableIDs.length)];
+				int amount = new Random().nextInt(maxGeneratedItems) + 1;
+				insertItemInChest(idToSpawn, amount);
+			}
 		}
+	}
+	
+	public Block getBlockFromID(int ID)
+	{
+		if(ID == Block.coalBlock.blockID)
+			return Block.coalBlock;
+		else if(ID == Block.oreIron.blockID)
+			return Block.oreIron;
+		
+		return Block.bed;
+	}
+	
+	public int insertItemInChest(int blockID, int amount)
+	{
+		TileEntity entity = getWorldObj().getBlockTileEntity(outX, outY, outZ);
+		if(amount <= 0)
+			return -1;
+		if(entity != null && entity instanceof IInventory)
+		{
+			IInventory entInv = (IInventory)entity;
+			for(int i = 0; i < entInv.getSizeInventory(); i++)
+			{
+				ItemStack currentStack = entInv.getStackInSlot(i);
+				if(currentStack == null)
+					entInv.setInventorySlotContents(i, new ItemStack(getBlockFromID(blockID), amount));
+				else if(currentStack.itemID == blockID)
+				{
+					
+					if(currentStack.stackSize + amount <= 64)
+					{
+						entInv.setInventorySlotContents(i, new ItemStack(getBlockFromID(blockID), currentStack.stackSize+amount));
+						i = entInv.getSizeInventory();
+					}
+					else
+					{
+						int remaining = Math.abs(64 - currentStack.stackSize - amount);
+						entInv.setInventorySlotContents(i, new ItemStack(getBlockFromID(blockID), 64));
+						insertItemInChest(blockID, remaining);
+						i = entInv.getSizeInventory();
+					}
+				}
+			}
+		}
+		return -1;
+	}
+	
+	public boolean hasAdjacentContainer(World world)
+	{
+		boolean done = false;
+		int offX = 1;
+		int offY = 0;
+		int offZ = 0;
+		while(!done)
+		{
+			TileEntity entity = world.getBlockTileEntity(xCoord + offX, yCoord+ offY, zCoord + offZ);
+			if(entity != null)
+			{
+				if(entity instanceof IInventory)
+				{
+					outX = xCoord + offX;
+					outY = yCoord + offY;
+					outZ = zCoord + offZ;
+					return true;
+				}
+			}
+			if(offX == 1)
+				offX = -1;
+			else if(offX == -1)
+			{
+				offX = 0;
+				offY = 1;
+			}
+			else if(offY == 1)
+				offY = -1;
+			else if(offY == -1)
+			{
+				offY = 0;
+				offZ = 1;
+			}
+			else if(offZ == 1)
+				offZ = -1;
+			else if(offZ == -1)
+				done = true;
+		}
+		return false;
 	}
 }
