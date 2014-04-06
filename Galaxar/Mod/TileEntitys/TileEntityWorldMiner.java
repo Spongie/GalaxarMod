@@ -29,6 +29,8 @@ public class TileEntityWorldMiner extends TileEntity implements IInventory {
 	
 	private int[] spawnableIDs;
 	
+	private int ticksOccured;
+	
 	public TileEntityWorldMiner(int min, int max, int fuelReq)
 	{
 		inventory = new ItemStack[1];
@@ -37,6 +39,7 @@ public class TileEntityWorldMiner extends TileEntity implements IInventory {
 		consumedFuel = 0;
 		fuelToGenerateItem = fuelReq;
 		initSpawns();
+		ticksOccured = 0;
 	}
 	
 	private void initSpawns()
@@ -159,38 +162,36 @@ public class TileEntityWorldMiner extends TileEntity implements IInventory {
 		}
 	}
 	
-	
-	public int tickRate()
-	{
-		//value % 20 = seconds between updates
-		return 100;
-	}
-	
 	public void updateEntity()
 	{
 		
 		if(hasAdjacentContainer(getWorldObj()))
-		{
-			
-			if(inventory[0] != null && inventory[0].stackSize > 0)
+		{	
+			ticksOccured++;
+			if(ticksOccured > 40)
 			{
+				if(inventory[0] != null && inventory[0].stackSize > 0)
+				{				
+					ticksOccured = 0;
+					consumedFuel += 1;
+					ItemStack stack = getStackInSlot(0);
+					stack.stackSize--;
+					if(stack.stackSize <= 1)
+						stack = null;
+					setInventorySlotContents(0, stack);
+				}
 				
-				consumedFuel += 1;
-				ItemStack stack = getStackInSlot(0);
-				stack.stackSize--;
-				if(stack.stackSize <= 1)
-					stack = null;
-				setInventorySlotContents(0, stack);
-			}
-			
-			if(consumedFuel >= fuelToGenerateItem)
-			{
-				consumedFuel = 0;
-				int idToSpawn = spawnableIDs[new Random().nextInt(spawnableIDs.length)];
-				int amount = new Random().nextInt(maxGeneratedItems) + 1;
-				insertItemInChest(idToSpawn, amount);
+				if(consumedFuel >= fuelToGenerateItem)
+				{
+					consumedFuel = 0;
+					int idToSpawn = spawnableIDs[new Random().nextInt(spawnableIDs.length)];
+					int amount = new Random().nextInt(maxGeneratedItems) + 1;
+					insertItemInChest(idToSpawn, amount);
+				}
 			}
 		}
+		else
+			ticksOccured = 0;
 	}
 	
 	public Block getBlockFromID(int ID)
@@ -215,7 +216,10 @@ public class TileEntityWorldMiner extends TileEntity implements IInventory {
 			{
 				ItemStack currentStack = entInv.getStackInSlot(i);
 				if(currentStack == null)
+				{
 					entInv.setInventorySlotContents(i, new ItemStack(getBlockFromID(blockID), amount));
+					i = entInv.getSizeInventory();
+				}
 				else if(currentStack.itemID == blockID)
 				{
 					
