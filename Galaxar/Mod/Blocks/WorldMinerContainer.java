@@ -2,10 +2,12 @@ package Galaxar.Mod.Blocks;
 
 import Galaxar.Mod.TileEntitys.TileEntityGalaxarChest;
 import Galaxar.Mod.TileEntitys.TileEntityWorldMiner;
+import Galaxar.Mod.TileEntitys.worldMinerFuelSlot;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 public class WorldMinerContainer extends Container {
@@ -21,7 +23,7 @@ public class WorldMinerContainer extends Container {
 	
 	private void addContainerSlots(TileEntityWorldMiner entity)
 	{
-		addSlotToContainer(new Slot(entity, 0, 100, 100));
+		addSlotToContainer(new worldMinerFuelSlot(entity, 0, 100, 100));
 	}
 	
 	private void getPlayerInventory(InventoryPlayer invPlayer)
@@ -44,9 +46,18 @@ public class WorldMinerContainer extends Container {
 	public ItemStack transferStackInSlot(EntityPlayer player, int i){
 		Slot slot = getSlot(i);
 		
+		if(slot != null)
+		{
+			if(slot.getStack() != null)
+			{
+				if(slot.getStack().itemID != Item.coal.itemID)
+					return null;
+			}
+		}
+		
 		if(slot != null && slot.getHasStack())
 		{
-			ItemStack itemstack = slot.getStack();
+			ItemStack itemstack = slot.getStack();		
 			ItemStack result = itemstack.copy();
 			if(i >= 36)
 			{

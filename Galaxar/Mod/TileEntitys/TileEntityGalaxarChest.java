@@ -15,7 +15,6 @@ import net.minecraft.world.World;
 public class TileEntityGalaxarChest extends TileEntity implements IInventory {
 
 	private ItemStack[] inventory;
-	private int power;
 	
 	public TileEntityGalaxarChest(){
 		inventory = new ItemStack[117];
@@ -122,7 +121,7 @@ public class TileEntityGalaxarChest extends TileEntity implements IInventory {
 	}
 	
 	@Override
-	public void readFromNBT(NBTTagCompound compound) {
+	public void readFromNBT(NBTTagCompound compound) {	
 		super.readFromNBT(compound);
 		NBTTagList list = compound.getTagList("ItemsGalaxarChest");
 		for(int i = 0; i < list.tagCount(); i++) {
@@ -133,26 +132,4 @@ public class TileEntityGalaxarChest extends TileEntity implements IInventory {
 				}
 		}
 	}
-	
-	/*
-	public int tickRate()
-	{
-		return 60;
-	}
-	 
-	public void updateEntity()
-	{
-		if(inventory != null)
-		{
-			if(inventory[0] != null && inventory[0].stackSize > 0)
-			{
-				ItemStack itemStack = getStackInSlot(0);
-				itemStack.stackSize--;
-				if(itemStack.stackSize <= 1)
-					itemStack = null;
-				
-				setInventorySlotContents(0, itemStack);
-			}
-		}
-	}*/
 }

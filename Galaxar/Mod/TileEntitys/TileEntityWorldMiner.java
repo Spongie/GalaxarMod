@@ -2,16 +2,19 @@ package Galaxar.Mod.TileEntitys;
 
 import java.util.Random;
 
+import cpw.mods.fml.common.network.PacketDispatcher;
+
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.INetworkManager;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Vec3;
-import net.minecraft.util.Vec3Pool;
 import net.minecraft.world.World;
 
 public class TileEntityWorldMiner extends TileEntity implements IInventory {
@@ -44,9 +47,12 @@ public class TileEntityWorldMiner extends TileEntity implements IInventory {
 	
 	private void initSpawns()
 	{
-		spawnableIDs = new int[2];
-		spawnableIDs[0] = Block.coalBlock.blockID;
+		spawnableIDs = new int[5];
+		spawnableIDs[0] = Block.oreCoal.blockID;
 		spawnableIDs[1] = Block.oreIron.blockID;
+		spawnableIDs[2] = Block.oreGold.blockID;
+		spawnableIDs[3] = Block.oreDiamond.blockID;
+		spawnableIDs[4] = Block.oreEmerald.blockID;
 	}
 	
 	@Override
@@ -121,10 +127,28 @@ public class TileEntityWorldMiner extends TileEntity implements IInventory {
 	@Override
 	public void closeChest() {
 	}
-
+	
 	@Override
 	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
-		return true;
+		
+		System.out.println("Derping");
+		if(i == 0)
+		{
+			if(itemstack.itemID == Item.coal.itemID)
+			{
+				ItemStack currentContent = getStackInSlot(i);
+				if(currentContent == null)
+					return true;
+				else if(currentContent.getItemDamage() == itemstack.getItemDamage())
+					return true;
+				else 
+					return false;
+			}
+			else
+				return false;
+			
+		}		
+		return false;
 	}
 	
 	@Override
@@ -145,13 +169,14 @@ public class TileEntityWorldMiner extends TileEntity implements IInventory {
 				list.appendTag(item);
 			}
 		}
-		
 		compound.setTag("ItemsWorldMiner", list);
 	}
 	
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
-		super.readFromNBT(compound);
+		System.out.println("Loading chest");
+		
+		
 		NBTTagList list = compound.getTagList("ItemsWorldMiner");
 		for(int i = 0; i < list.tagCount(); i++) {
 			NBTTagCompound item = (NBTTagCompound) list.tagAt(i);
@@ -160,11 +185,26 @@ public class TileEntityWorldMiner extends TileEntity implements IInventory {
 				  setInventorySlotContents(slot, ItemStack.loadItemStackFromNBT(item));
 				}
 		}
+		
+		super.readFromNBT(compound);
+	}
+	
+	@Override
+	public Packet getDescriptionPacket()
+	{
+		NBTTagCompound compound = new NBTTagCompound();
+		this.writeToNBT(compound);
+		return new Packet132TileEntityData(xCoord, yCoord, zCoord, 1, compound);
+	}
+	
+	public void onDataPacket(INetworkManager networkManager, Packet132TileEntityData packet) {
+	    this.readFromNBT(packet.data);
 	}
 	
 	public void updateEntity()
 	{
-		
+		if(!worldObj.isRemote)
+		{
 		if(hasAdjacentContainer(getWorldObj()))
 		{	
 			ticksOccured++;
@@ -179,6 +219,7 @@ public class TileEntityWorldMiner extends TileEntity implements IInventory {
 					if(stack.stackSize <= 1)
 						stack = null;
 					setInventorySlotContents(0, stack);
+					worldObj.markBlockForUpdate(outX, outY, outZ);
 				}
 				
 				if(consumedFuel >= fuelToGenerateItem)
@@ -192,14 +233,23 @@ public class TileEntityWorldMiner extends TileEntity implements IInventory {
 		}
 		else
 			ticksOccured = 0;
+		
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		}
 	}
 	
 	public Block getBlockFromID(int ID)
 	{
-		if(ID == Block.coalBlock.blockID)
-			return Block.coalBlock;
+		if(ID == Block.oreCoal.blockID)
+			return Block.oreCoal;
 		else if(ID == Block.oreIron.blockID)
 			return Block.oreIron;
+		else if(ID == Block.oreGold.blockID)
+			return Block.oreGold;
+		else if(ID == Block.oreDiamond.blockID)
+			return Block.oreDiamond;
+		else if(ID == Block.oreEmerald.blockID)
+			return Block.oreEmerald;
 		
 		return Block.bed;
 	}
