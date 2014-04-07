@@ -34,6 +34,11 @@ public class TileEntityWorldMiner extends TileEntity implements IInventory {
 	
 	private int ticksOccured;
 	
+	public TileEntityWorldMiner()
+	{
+		this(1,5,1);
+	}
+	
 	public TileEntityWorldMiner(int min, int max, int fuelReq)
 	{
 		inventory = new ItemStack[1];
@@ -176,7 +181,7 @@ public class TileEntityWorldMiner extends TileEntity implements IInventory {
 	public void readFromNBT(NBTTagCompound compound) {
 		System.out.println("Loading chest");
 		
-		
+		super.readFromNBT(compound);
 		NBTTagList list = compound.getTagList("ItemsWorldMiner");
 		for(int i = 0; i < list.tagCount(); i++) {
 			NBTTagCompound item = (NBTTagCompound) list.tagAt(i);
@@ -185,8 +190,6 @@ public class TileEntityWorldMiner extends TileEntity implements IInventory {
 				  setInventorySlotContents(slot, ItemStack.loadItemStackFromNBT(item));
 				}
 		}
-		
-		super.readFromNBT(compound);
 	}
 	
 	@Override
