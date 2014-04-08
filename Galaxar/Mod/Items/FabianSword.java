@@ -44,10 +44,14 @@ public class FabianSword extends ItemPickaxe {
 			
 			for(int i = 0; i < 3; i++)
 			{
-				par2World.destroyBlock(x + 1, y+(int)realY * i, z -1, true);
-				par2World.destroyBlock(x + 1, y+(int)realY * i, z +1, true);
-				par2World.destroyBlock(x - 1, y+(int)realY * i, z -1, true);
-				par2World.destroyBlock(x - 1, y+(int)realY * i, z +1, true);
+				if(par2World.getBlockId(x + 1, y+ (int)realY * i, z -1) != Block.bedrock.blockID)
+					par2World.destroyBlock(x + 1, y+(int)realY * i, z -1, true);
+				if(par2World.getBlockId(x + 1, y+ (int)realY * i, z +1) != Block.bedrock.blockID)
+					par2World.destroyBlock(x + 1, y+(int)realY * i, z +1, true);
+				if(par2World.getBlockId(x - 1, y+ (int)realY * i, z- 1) != Block.bedrock.blockID)
+					par2World.destroyBlock(x - 1, y+(int)realY * i, z -1, true);
+				if(par2World.getBlockId(x - 1, y+ (int)realY * i, z + 1) != Block.bedrock.blockID)
+					par2World.destroyBlock(x - 1, y+(int)realY * i, z +1, true);
 			}
 			
 			if(par2World.getBlockId(x, y+(int)realY, z) != Block.bedrock.blockID)
@@ -107,24 +111,42 @@ public class FabianSword extends ItemPickaxe {
 			
 			for(int i = 0; i < 3; i++)
 			{
-				par2World.destroyBlock(x + (int)realX * i, y + 1, z + 1, true);
-				par2World.destroyBlock(x + (int)realX * i, y + 1, z - 1, true);
-				par2World.destroyBlock(x + (int)realX * i, y - 1, z + 1, true);
-				par2World.destroyBlock(x + (int)realX * i, y - 1, z - 1, true);
+				if(par2World.getBlockId(x + (int)realX * i, y + 1, z + 1) != Block.bedrock.blockID)
+					par2World.destroyBlock(x + (int)realX * i, y + 1, z + 1, true);
+				
+				if(par2World.getBlockId(x + (int)realX * i, y + 1, z - 1) != Block.bedrock.blockID)
+					par2World.destroyBlock(x + (int)realX * i, y + 1, z - 1, true);
+				
+				if(par2World.getBlockId(x + (int)realX * i, y - 1, z + 1) != Block.bedrock.blockID)
+					par2World.destroyBlock(x + (int)realX * i, y - 1, z + 1, true);
+				if(par2World.getBlockId(x + (int)realX * i, y - 1, z - 1) != Block.bedrock.blockID)
+					par2World.destroyBlock(x + (int)realX * i, y - 1, z - 1, true);
 			}
 			
-			par2World.destroyBlock(x+(int)realX, y, z, true);
-			par2World.destroyBlock(x+(int)realX*2, y, z, true);
-			par2World.destroyBlock(x+(int)realX, y+1, z, true);
-			par2World.destroyBlock(x+(int)realX*2, y+1, z, true);
-			par2World.destroyBlock(x+(int)realX, y-1, z, true);
-			par2World.destroyBlock(x+(int)realX*2, y-1, z, true);
-			par2World.destroyBlock(x+(int)realX, y, z+1, true);
-			par2World.destroyBlock(x+(int)realX*2, y, z+1, true);
-			par2World.destroyBlock(x+(int)realX, y, z-1, true);
-			par2World.destroyBlock(x+(int)realX*2, y, z-1, true);
-			par2World.destroyBlock(x, y, z + 1, true);
-			par2World.destroyBlock(x, y, z - 1, true);
+			if(par2World.getBlockId(x + (int)realX, y, z) != Block.bedrock.blockID)
+				par2World.destroyBlock(x+(int)realX, y, z, true);
+			if(par2World.getBlockId(x + (int)realX*2, y, z) != Block.bedrock.blockID)
+				par2World.destroyBlock(x+(int)realX*2, y, z, true);
+			if(par2World.getBlockId(x + (int)realX, y+1, z) != Block.bedrock.blockID)
+				par2World.destroyBlock(x+(int)realX, y+1, z, true);
+			if(par2World.getBlockId(x + (int)realX*2, y+1, z) != Block.bedrock.blockID)
+				par2World.destroyBlock(x+(int)realX*2, y+1, z, true);
+			if(par2World.getBlockId(x + (int)realX, y-1, z) != Block.bedrock.blockID)
+				par2World.destroyBlock(x+(int)realX, y-1, z, true);
+			if(par2World.getBlockId(x + (int)realX*2, y-1, z) != Block.bedrock.blockID)
+				par2World.destroyBlock(x+(int)realX*2, y-1, z, true);
+			if(par2World.getBlockId(x + (int)realX, y, z+1) != Block.bedrock.blockID)
+				par2World.destroyBlock(x+(int)realX, y, z+1, true);
+			if(par2World.getBlockId(x + (int)realX*2, y, z+1) != Block.bedrock.blockID)
+				par2World.destroyBlock(x+(int)realX*2, y, z+1, true);
+			if(par2World.getBlockId(x + (int)realX, y, z-1) != Block.bedrock.blockID)
+				par2World.destroyBlock(x+(int)realX, y, z-1, true);
+			if(par2World.getBlockId(x + (int)realX*2, y, z-1) != Block.bedrock.blockID)
+				par2World.destroyBlock(x+(int)realX*2, y, z-1, true);
+			if(par2World.getBlockId(x, y, z + 1) != Block.bedrock.blockID)
+				par2World.destroyBlock(x, y, z + 1, true);
+			if(par2World.getBlockId(x, y, z - 1) != Block.bedrock.blockID)
+				par2World.destroyBlock(x, y, z - 1, true);
 		}
 		else
 		{
@@ -137,28 +159,46 @@ public class FabianSword extends ItemPickaxe {
 			
 			for(int i = 0; i < 3; i++)
 			{
-				par2World.destroyBlock(x + 1, y + 1, z + (int)realZ * i, true);
-				par2World.destroyBlock(x - 1, y + 1, z + (int)realZ * i, true);
-				par2World.destroyBlock(x + 1 , y - 1, z + (int)realZ * i, true);
-				par2World.destroyBlock(x - 1, y - 1, z + (int)realZ * i, true);
+				if(par2World.getBlockId(x + 1, y + 1, z + (int)realZ * i) != Block.bedrock.blockID)
+					par2World.destroyBlock(x + 1, y + 1, z + (int)realZ * i, true);
+				if(par2World.getBlockId(x - 1, y + 1, z + (int)realZ * i) != Block.bedrock.blockID)
+					par2World.destroyBlock(x - 1, y + 1, z + (int)realZ * i, true);
+				if(par2World.getBlockId(x + 1, y - 1, z + (int)realZ * i) != Block.bedrock.blockID)
+					par2World.destroyBlock(x + 1 , y - 1, z + (int)realZ * i, true);
+				if(par2World.getBlockId(x - 1, y - 1, z + (int)realZ * i) != Block.bedrock.blockID)
+					par2World.destroyBlock(x - 1, y - 1, z + (int)realZ * i, true);
 			}
 			
 			if(par2World.getBlockId(x, y + 1, z) != Block.bedrock.blockID)
 				par2World.destroyBlock(x, y+ 1, z, true);
 			if(par2World.getBlockId(x, y - 1, z) != Block.bedrock.blockID)
 				par2World.destroyBlock(x, y- 1, z, true);
-			par2World.destroyBlock(x, y, z+(int)realZ, true);
-			par2World.destroyBlock(x, y, z+(int)realZ*2, true);
-			par2World.destroyBlock(x, y+1, z+(int)realZ, true);
-			par2World.destroyBlock(x, y+1, z+(int)realZ*2, true);
-			par2World.destroyBlock(x, y-1, z+(int)realZ, true);
-			par2World.destroyBlock(x, y-1, z+(int)realZ*2, true);
-			par2World.destroyBlock(x+1, y, z+(int)realZ, true);
-			par2World.destroyBlock(x+1, y, z+(int)realZ*2, true);
-			par2World.destroyBlock(x-1, y, z+(int)realZ, true);
-			par2World.destroyBlock(x-1, y, z+(int)realZ*2, true);
-			par2World.destroyBlock(x + 1, y, z, true);
-			par2World.destroyBlock(x - 1, y, z, true);
+			
+			if(par2World.getBlockId(x, y, z + (int)realZ) != Block.bedrock.blockID)
+				par2World.destroyBlock(x, y, z+(int)realZ, true);
+			if(par2World.getBlockId(x, y, z + (int)realZ*2) != Block.bedrock.blockID)
+				par2World.destroyBlock(x, y, z+(int)realZ*2, true);
+			if(par2World.getBlockId(x, y+1, z + (int)realZ) != Block.bedrock.blockID)
+				par2World.destroyBlock(x, y+1, z+(int)realZ, true);
+			if(par2World.getBlockId(x, y+1, z + (int)realZ*2) != Block.bedrock.blockID)
+				par2World.destroyBlock(x, y+1, z+(int)realZ*2, true);
+			if(par2World.getBlockId(x, y-1, z + (int)realZ) != Block.bedrock.blockID)
+				par2World.destroyBlock(x, y-1, z+(int)realZ, true);
+			if(par2World.getBlockId(x, y-1, z + (int)realZ*2) != Block.bedrock.blockID)
+				par2World.destroyBlock(x, y-1, z+(int)realZ*2, true);
+			
+			if(par2World.getBlockId(x + 1, y, z + (int)realZ) != Block.bedrock.blockID)
+				par2World.destroyBlock(x+1, y, z+(int)realZ, true);
+			if(par2World.getBlockId(x + 1, y, z + (int)realZ*2) != Block.bedrock.blockID)
+				par2World.destroyBlock(x+1, y, z+(int)realZ*2, true);
+			if(par2World.getBlockId(x -1, y, z + (int)realZ) != Block.bedrock.blockID)
+				par2World.destroyBlock(x-1, y, z+(int)realZ, true);
+			if(par2World.getBlockId(x-1, y, z + (int)realZ*2) != Block.bedrock.blockID)
+				par2World.destroyBlock(x-1, y, z+(int)realZ*2, true);
+			if(par2World.getBlockId(x + 1, y, z) != Block.bedrock.blockID)
+				par2World.destroyBlock(x + 1, y, z, true);
+			if(par2World.getBlockId(x - 1, y, z) != Block.bedrock.blockID)
+				par2World.destroyBlock(x - 1, y, z, true);
 		}
 		}
         return false;
