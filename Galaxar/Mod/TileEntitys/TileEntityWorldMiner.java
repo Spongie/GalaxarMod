@@ -1,5 +1,6 @@
 package Galaxar.Mod.TileEntitys;
 
+import java.util.Map;
 import java.util.Random;
 
 import cpw.mods.fml.common.network.PacketDispatcher;
@@ -34,6 +35,8 @@ public class TileEntityWorldMiner extends TileEntity implements IInventory {
 	
 	private int ticksOccured;
 	
+	private int boostLvl;
+	
 	public TileEntityWorldMiner()
 	{
 		this(1,5,1);
@@ -41,6 +44,7 @@ public class TileEntityWorldMiner extends TileEntity implements IInventory {
 	
 	public TileEntityWorldMiner(int min, int max, int fuelReq)
 	{
+		boostLvl = 0;
 		inventory = new ItemStack[1];
 		minGeneratedItems = min;
 		maxGeneratedItems = max;
@@ -179,7 +183,6 @@ public class TileEntityWorldMiner extends TileEntity implements IInventory {
 	
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
-		System.out.println("Loading chest");
 		
 		super.readFromNBT(compound);
 		NBTTagList list = compound.getTagList("ItemsWorldMiner");
@@ -208,6 +211,7 @@ public class TileEntityWorldMiner extends TileEntity implements IInventory {
 	{
 		if(!worldObj.isRemote)
 		{
+			
 		if(hasAdjacentContainer(getWorldObj()))
 		{	
 			ticksOccured++;
@@ -228,8 +232,8 @@ public class TileEntityWorldMiner extends TileEntity implements IInventory {
 				if(consumedFuel >= fuelToGenerateItem)
 				{
 					consumedFuel = 0;
-					int idToSpawn = spawnableIDs[new Random().nextInt(spawnableIDs.length)];
-					int amount = new Random().nextInt(maxGeneratedItems) + 1;
+					int idToSpawn = spawnableIDs[getSpawnIndex()];
+					int amount = new Random().nextInt(maxGeneratedItems + 1);
 					insertItemInChest(idToSpawn, amount);
 				}
 			}
@@ -255,6 +259,22 @@ public class TileEntityWorldMiner extends TileEntity implements IInventory {
 			return Block.oreEmerald;
 		
 		return Block.bed;
+	}
+	
+	private int getSpawnIndex()
+	{
+		int res = new Random().nextInt(101);
+		if(res >= 98 - boostLvl)
+			return 4;
+		else if(res >= 90 - boostLvl)
+			return 3;
+		else if(res >= 70 - boostLvl)
+			return 2;
+		else if(res >= 45 - boostLvl)
+			return 1;
+		else
+			return 0;
+		
 	}
 	
 	public int insertItemInChest(int blockID, int amount)
@@ -307,10 +327,14 @@ public class TileEntityWorldMiner extends TileEntity implements IInventory {
 			{
 				if(entity instanceof IInventory)
 				{
-					outX = xCoord + offX;
-					outY = yCoord + offY;
-					outZ = zCoord + offZ;
-					return true;
+					if(!isContainerFull((IInventory)entity))
+					{
+						outX = xCoord + offX;
+						outY = yCoord + offY;
+						outZ = zCoord + offZ;
+						return true;
+					}
+					
 				}
 			}
 			if(offX == 1)
@@ -333,5 +357,21 @@ public class TileEntityWorldMiner extends TileEntity implements IInventory {
 				done = true;
 		}
 		return false;
+	}
+	
+	private boolean isContainerFull(IInventory inv)
+	{
+		if(inv != null)
+		{
+			for(int i = 0; i < inv.getSizeInventory(); i++)
+			{
+				ItemStack current = inv.getStackInSlot(i);
+				if(current == null)
+					return false;
+				else if(current.stackSize < 64)
+					return false;
+			}
+		}
+		return true;
 	}
 }

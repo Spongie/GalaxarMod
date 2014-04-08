@@ -65,6 +65,7 @@ public class MainMod {
 	public final static Item darkPlankShovel = new DarkPlankShovel(3435, darkPlankToolMaterial);
 	public final static Item darkPlankSword = new DarkPlankSword(3436, darkPlankToolMaterial);
 	public final static Item darkPlankHoe = new DarkPlankHoe(3437, darkPlankToolMaterial);
+	public final static Item fabianSword = new FabianSword(3449, fabianSwordMaterial);
 	
 	@SidedProxy(clientSide="Galaxar.Mod.Client.ClientProxy", serverSide="Galaxar.Mod.CommonProxy")
 	public static CommonProxy proxy;
@@ -126,6 +127,9 @@ public class MainMod {
 	
 	private void RegisterItems()
 	{
+		GameRegistry.registerItem(fabianSword, "fabianSword");
+		LanguageRegistry.addName(fabianSword, "Sword of Fabian");
+		
 		GameRegistry.registerItem(darkStick, "darkStick");
 		LanguageRegistry.addName(darkStick, "Dark Stick");
 		

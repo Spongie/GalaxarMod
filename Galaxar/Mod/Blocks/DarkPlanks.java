@@ -23,15 +23,15 @@ public class DarkPlanks extends Block {
 		setTextureName("galaxar:darkPlanks");
 	}
 	
+	@Override
 	public int idDropped(int metadata, Random random, int fortune)
 	{
 		return MainMod.darkPlanks.blockID;
 	}
 	
+	@Override
 	public int quantityDropped(Random random)
 	{
 		return dropAmount;
 	}
-
-
 }
