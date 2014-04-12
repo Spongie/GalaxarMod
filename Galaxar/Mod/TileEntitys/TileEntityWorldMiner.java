@@ -21,8 +21,8 @@ import net.minecraft.world.World;
 public class TileEntityWorldMiner extends TileEntity implements IInventory {
 
 	ItemStack[] inventory;
-	private int consumedFuel;
-	private int fuelToGenerateItem;
+	public int consumedFuel;
+	public int fuelToGenerateItem;
 	
 	private int minGeneratedItems;
 	private int maxGeneratedItems;
@@ -33,13 +33,13 @@ public class TileEntityWorldMiner extends TileEntity implements IInventory {
 	
 	private int[] spawnableIDs;
 	
-	private int ticksOccured;
+	public int ticksOccured;
 	
 	private int boostLvl;
 	
 	public TileEntityWorldMiner()
 	{
-		this(1,5,1);
+		this(0,3,5);
 	}
 	
 	public TileEntityWorldMiner(int min, int max, int fuelReq)
@@ -72,6 +72,14 @@ public class TileEntityWorldMiner extends TileEntity implements IInventory {
 	@Override
 	public ItemStack getStackInSlot(int i) {
 		return inventory[i];
+	}
+	
+	public float getBurnedPercentage()
+	{
+		if(getStackInSlot(0) == null)
+			return 0;
+		
+		return  (float)(consumedFuel + 1) / (float)fuelToGenerateItem;
 	}
 
 	@Override
@@ -139,25 +147,7 @@ public class TileEntityWorldMiner extends TileEntity implements IInventory {
 	
 	@Override
 	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
-		
-		System.out.println("Derping");
-		if(i == 0)
-		{
-			if(itemstack.itemID == Item.coal.itemID)
-			{
-				ItemStack currentContent = getStackInSlot(i);
-				if(currentContent == null)
-					return true;
-				else if(currentContent.getItemDamage() == itemstack.getItemDamage())
-					return true;
-				else 
-					return false;
-			}
-			else
-				return false;
-			
-		}		
-		return false;
+		return true;
 	}
 	
 	@Override
@@ -240,9 +230,9 @@ public class TileEntityWorldMiner extends TileEntity implements IInventory {
 		}
 		else
 			ticksOccured = 0;
-		
-		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 		}
+		else
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
 	
 	public Block getBlockFromID(int ID)

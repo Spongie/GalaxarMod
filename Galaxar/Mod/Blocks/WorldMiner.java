@@ -53,7 +53,7 @@ public class WorldMiner extends BlockContainer {
 
 	@Override
 	public TileEntity createNewTileEntity(World world) {
-		return new TileEntityWorldMiner(1, 5, 1);
+		return new TileEntityWorldMiner(0, 3, 5);
 	}
 	
 	@Override

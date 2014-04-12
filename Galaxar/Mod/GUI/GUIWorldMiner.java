@@ -11,12 +11,15 @@ import Galaxar.Mod.TileEntitys.TileEntityWorldMiner;
 
 public class GUIWorldMiner extends GuiContainer {
 
-	public static final ResourceLocation texture = new ResourceLocation("galaxar", "textures/GUI/GalaxarChest.png");
+	public static final ResourceLocation texture = new ResourceLocation("galaxar", "textures/GUI/worldMiner.png");
+	public static final ResourceLocation progressBar = new ResourceLocation("galaxar", "textures/GUI/progress.png");
+	TileEntityWorldMiner miner;
 	
 	public GUIWorldMiner(InventoryPlayer invPlayer, TileEntityWorldMiner miner) {
 		super(new WorldMinerContainer(invPlayer, miner));
-		xSize = 256;
-		ySize = 256;
+		xSize = 176;
+		ySize = 209;
+		this.miner = miner;
 	}
 
 	@Override
@@ -24,5 +27,8 @@ public class GUIWorldMiner extends GuiContainer {
 		GL11.glColor4f(1F, 1F, 1F, 1F);
 		Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
 		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
+		
+		Minecraft.getMinecraft().getTextureManager().bindTexture(progressBar);
+		drawTexturedModalRect(guiLeft + 31, guiTop + 9, 0, 0, (int)(47 * miner.getBurnedPercentage()), 16);
 	}
 }
